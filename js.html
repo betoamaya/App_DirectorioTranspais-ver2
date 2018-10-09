@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <script>
+            $( "#btnBuscar" ).click(function() {
+                google.script.run.withSuccessHandler(showThings).getConsulta();
+            });
+            
+            $('#navicon').click(function() {
+                // Recargo la página
+                reset();
+            });
+            
+            function AddKeyPress(e) {
+                 e = e || window.event;
+                 if (e.keyCode == 13) {
+                     document.getElementById('btnBuscar').click();
+                     return false;
+                 }
+                 return true
+            }
+            
+            function reset(){
+                var list = $('#resultados');
+                var stxtNombre = $('#txtNombre');
+                list.empty();
+                stxtNombre[0].value = '';
+                document.querySelector('#ptMensaje').text='Introduzca nombre a buscar';
+                document.querySelector('#ptMensaje').show();
+            }
+            
+            function showThings(tTemporal) {
+                //console.log(tTemporal);
+                var list = $('#resultados');
+                var stxtNombre = $('#txtNombre');
+                var sBuscar = stxtNombre[0].value.toUpperCase();
+                var cadena = '';
+                var tResultados = new Array (1);
+                var iX = -1;
+                var USR = '';
+                console.log(sBuscar);
+                //console.log(sBuscar.length);
+                if (sBuscar.length != 0){
+                    for (var iB= 0; iB < tTemporal.length; iB++){
+                        cadena = tTemporal[iB][0] + tTemporal[iB][1] + tTemporal[iB][2] + " " + tTemporal[iB][2] + " " + tTemporal[iB][1]  + tTemporal[iB][6] + tTemporal[iB][7] + tTemporal[iB][8];
+                        //console.log(cadena);
+                        if (cadena.indexOf(sBuscar) != -1){
+                             //console.log('Entro');
+                             iX ++;
+                             USR = '';
+                             tResultados[iX] = new Array (3);
+                             tResultados[iX][0] = tTemporal[iB][0].toString();
+                             tResultados[iX][1] = tTemporal[iB][1].toString() + ", " + tTemporal[iB][2].toString();
+                             USR = tTemporal[iB][6].toString();
+                             if (tTemporal[iB][7].length != 0){
+                                USR = USR + ', ' + tTemporal[iB][7].toString();
+                             }
+                             if (tTemporal[iB][8].length != 0){
+                                USR = USR + ', ' + tTemporal[iB][8].toString();
+                             }
+                             tResultados[iX][2] = USR;
+                        }
+                    }
+                }
+                
+                list.empty();
+                if (iX == - 1){
+                    list.append('<center><p><b>No se encontraron Resultados</b></p></center>')
+                    document.querySelector('#ptMensaje').text='No se encontraron Resultados';
+                }else{
+                     for (var iR = 0; iR < tResultados.length; iR++){
+                      list.append('<center><nav class="navbar navbar-inverse"><div class="container-fluid" class="col-xs-7 col-sm-5 col-md-5 col-lg-4"><p style="color: white"><b>Ext:&nbsp;</b>' + tResultados[iR][0] + '<br><b>Nombre:&nbsp;</b>' + tResultados[iR][1] + '<br><b>Usuario Regular:&nbsp;</b>' + tResultados[iR][2] + '</p></div></nav></center>' );
+                        //list.append('<p><b>Ext:&nbsp;</b>1010<b><br>Nombre:&nbsp;</b>Amaya, Roberto<b><br>Usuario Regular:&nbsp;</b>Roberto Amaya</p>'
+                     }
+                     iX ++;
+                     document.querySelector('#ptMensaje').text='Cantidad de registros encontrados: ' + iX;
+                }
+                document.querySelector('#ptMensaje').show();
+           }
+            
+        </script>
+  </body>
+</html>
+
